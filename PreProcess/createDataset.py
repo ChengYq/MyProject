@@ -1,25 +1,27 @@
 # coding=utf-8
-# 本模块用来读取要研究的arff文件以及属性信息
-# 函数readArff的作用：读取arff文件，输入：文件的路径。输出：data:数据内容，mata: 属性信息
+# 本模块用来读取要研究的arff文件以及属性信息,并且根据交叉验证的方法，产生训练集和测试集
 
 import random
 from scipy.io import arff
 
 
 def readArff(path):
-    # data 就是要读取的文件
-    # meta 就是关于该文件的一些信息
+    # 输入：arff文件路径
+    # 输出data 就是要读取的文件
+    # 输出meta 就是关于该文件的一些信息
     data, meta = arff.loadarff(path)
     return data, meta
 
 
 def createDataSet(arffPath, fold):
+    # 输入： arffpath： arff文件路径。 fold： 交叉验证中的fold个数
+    # 输出： 训练集、测试集
     trainSet = []
     testSet = []
     data, meta = arff.loadarff(arffPath)
-    seq = range(len(data))
-    random.shuffle(seq)
-    testNum = len(data) / fold
+    seq = range(len(data))  # 用于随机查找
+    random.shuffle(seq)  # shuffle函数：重新对list进行随机排列
+    testNum = len(data) / fold  # testNUM: 测试集的元素个数
     # print len(data)-testNum
     # print len(seq[:testNum])
     # print len(seq[testNum:])
