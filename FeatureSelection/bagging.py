@@ -1,6 +1,6 @@
 # coding=utf-8
 def bagIt(dataSet):
-    # dataSet为List类型的
+    # dataSet为List类型的,应该是训练集
     noDefectCount = 0
     defectCount = 0
     for i in dataSet:
@@ -9,6 +9,16 @@ def bagIt(dataSet):
             defectCount += 1
         elif i[-1].lower() in ['false', 'n', 'no']:
             noDefectCount += 1
+
+    seq = range(len(dataSet))
+    from random import shuffle
+    shuffle(seq)
+    print seq[:defectCount], len(seq[:defectCount])
+
+    for i in seq[:defectCount]:
+        dataSet[i]
+    ##########
+
 
     print len(dataSet)
     print noDefectCount, defectCount
