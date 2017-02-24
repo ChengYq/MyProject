@@ -32,15 +32,19 @@ def createDataSet(arffPath, fold):
         trainSet.append(data[j])
 
     return trainSet, testSet
+    # 这个里边的数据，是numpy.float64类型的。需要注意！
 
 
-if __name__ == '__main__':
+def test():
     from os import path
-
     # # print os.path.dirna
     filePath = path.abspath(path.join(path.dirname(__file__), path.pardir, r'DataSet', r'MDP', r'PROMISE', r'cm1.arff'))
     # data,meta=readArff(filePath)
     # print len(data)
-    train, test = createDataSet(filePath, 5)
-    print train
-    print test
+    trainset, testset = createDataSet(filePath, 5)
+    print trainset
+    print testset
+
+
+if __name__ == '__main__':
+    test()
