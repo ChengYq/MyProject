@@ -1,4 +1,5 @@
 # coding=utf-8
+# http://blog.csdn.net/kryolith/article/details/40849483
 import numpy as np
 from random import randrange
 
@@ -7,7 +8,7 @@ from sklearn.preprocessing import normalize
 
 
 def distanceNorm(Norm, D_value):
-    # initialization
+    # 这里的Nrom代表了范数的类型，Dvalue在后边的函数中有所用
 
     # Norm for distance
     if Norm == '1':
@@ -27,15 +28,18 @@ def distanceNorm(Norm, D_value):
 
 
 def fit(dataSet, iter_ratio):
+    # 首先，讲feature 和 label 分离出来
     features = []
     labels = []
     for i in dataSet:
         # print list(i)[:-1]
         features.append(list(i)[:-1])
         labels.append(list(i)[-1])
-    # initialization
+
+    # 归一化
     features = normalize(X=features, norm='l2', axis=0)
 
+    # 以下代码用来产生reliefF函数
     (n_samples, n_features) = np.shape(features)
     distance = np.zeros((n_samples, n_samples))
     weight = np.zeros(n_features)
@@ -92,8 +96,23 @@ def fit(dataSet, iter_ratio):
                 continue
                 # update weight
         weight = weight - np.power(self_features - nearHit, 2) + np.power(self_features - nearMiss, 2)
-    print weight / (iter_ratio * n_samples)
-    return weight / (iter_ratio * n_samples)
+
+        # weightedSeq存储了特征的重要性的打分值
+        weightSeq = weight / (iter_ratio * n_samples)
+
+        # 以下代码，是用来对特征的分值进行排序的，最终的结果存储在index 里，
+        # index从左到右，存储了特征重要性从高到低。
+        weightDict = zip(weightSeq, range(len(weightSeq)))
+        res = sorted(weightDict, key=lambda x: x[0], reverse=True)
+
+        index = []
+        for i in res:
+            index.append(i[1])
+
+    print index
+    return index
+    # print weight / (iter_ratio * n_samples)
+    # return weight / (iter_ratio * n_samples)
 
 
 def test():
@@ -104,8 +123,10 @@ def test():
     trainset, testset = createDataset.createDataSet(filePath, 5)
     featureSet = bagging.bagIt(trainset)
 
-    for x in xrange(1, 30):
-        weight = fit(featureSet, 1)
+    for x in xrange(1, 20):
+        # 这个地方非常重要！因为relefF算法需要多次执行，看以下平均值
+        weight = fit(featureSet, 0.6)
+        # 这个0.6，就是按照比例抽样的意思，如果是1，那么就全部抽样了
 
 
 if __name__ == '__main__':
