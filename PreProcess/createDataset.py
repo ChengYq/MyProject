@@ -2,15 +2,7 @@
 # 本模块用来读取要研究的arff文件以及属性信息,并且根据交叉验证的方法，产生训练集和测试集
 
 import random
-from scipy.io import arff
-
-
-def readArff(path):
-    # 输入：arff文件路径
-    # 输出data 就是要读取的文件
-    # 输出meta 就是关于该文件的一些信息
-    data, meta = arff.loadarff(path)
-    return data, meta
+import arff
 
 
 def createDataSet(arffPath, fold):
@@ -18,7 +10,9 @@ def createDataSet(arffPath, fold):
     # 输出： 训练集、测试集
     trainSet = []
     testSet = []
-    data, meta = arff.loadarff(arffPath)
+    res = arff.load(open(arffPath, 'rb'))
+    data = res['data']
+    print len(data)
     seq = range(len(data))  # 用于随机查找
     random.shuffle(seq)  # shuffle函数：重新对list进行随机排列
     testNum = len(data) / fold  # testNUM: 测试集的元素个数
