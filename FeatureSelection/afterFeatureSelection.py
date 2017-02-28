@@ -1,16 +1,13 @@
 # coding=utf-8
+
+import numpy as np
 from FeatureSelection import bagging
 from FeatureSelection import reliefF
-from PreProcess import createDataset
-from os import path
-import numpy as np
-
-
 
 def selectedSet(dataSet):
     # 本函数的目的：根据前边的特征选择部分，返回一个特征选择后的数据集
     # 基本思路： bagging + featureSelection
-    # 输入 bagging后的数据集子集
+    # 输入 测试集！不要输入bagging后的！！！
     # 输出：进行了特征选择后的数据集（特征子集）
 
     # count有点哈希的意味，初始全0，长度等于feature的个数。
@@ -54,17 +51,19 @@ def selectedSet(dataSet):
 
     # 为了生成特征子集，转为ndarray就可以使用切片功能了，相当的方便
     aaa = np.array(dataSet)
-    res = aaa[:, feature_index]
-    res = res.tolist()
-    print res
+    resSet = aaa[:, feature_index]
+    resSet = resSet.tolist()
+    print resSet
     # 这里的res是List类型的
-    return res
+    return resSet
 
     # for i in rangepython  二维数组 列索引(len(dataSet)):
     #     if i in feature_index:
 
 
 def test():
+    from PreProcess import createDataset
+    from os import path
     filePath = path.abspath(path.join(path.dirname(__file__), path.pardir, r'DataSet', r'MDP', r'PROMISE', r'cm1.arff'))
     trainset, testset = createDataset.createDataSet(filePath, 5)
     r = selectedSet(trainset)
