@@ -43,7 +43,7 @@ def selectedSet(dataSet):
     print len(count)
 
     # 列表生成器。 将那些出现次数大于12的下标拿出来，存储进feature_index中
-    feature_index = [i for i in range(len(count)) if count[i] >= 12]
+    feature_index = [i for i in range(len(count)) if count[i] >= 13]
 
     print len(feature_index)
 
