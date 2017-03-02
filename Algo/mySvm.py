@@ -33,27 +33,42 @@ def originSVM(trainSet, testSet):
     x, y = libsvmFormat.formatlib(train_features, train_labels)
     xtest, ytest = libsvmFormat.formatlib(test_features, test_labels)
     prob = svm_problem(y, x)
-    param = svm_parameter('-t 0 -c 4 -b 1')
+    param = svm_parameter('-c 0.5')  # 这里值得继续研究研究！
+
     model = svm_train(prob, param)
-    p_label, p_acc, p_val = svm_predict(ytest, xtest, model)
-    print p_label, p_acc, p_val
+    predicted_label, predicted_acc, predicted_val = svm_predict(ytest, xtest, model)
+    print predicted_label
+    return predicted_label
 
 
 
 def test():
     from PreProcess import createDataset
-    from FeatureSelection import bagging
     from os import path
     from FeatureSelection import afterFeatureSelection
-    filePath = path.abspath(path.join(path.dirname(__file__), path.pardir, r'DataSet', r'MDP', r'PROMISE', r'cm1.arff'))
+    filePath = path.abspath(path.join(path.dirname(__file__), path.pardir, r'DataSet', r'MDP', r'PROMISE', r'kc1.arff'))
     trainset, testset = createDataset.createDataSet(filePath, 5)
     # featureSet = bagging.bagIt(trainset)
     featured_trainset = afterFeatureSelection.selectedSet(trainset)
-    originSVM(featured_trainset, testset)
+
+    from Evaluation.eva import evaluationRes
+
+    predicted_label_f = originSVM(featured_trainset, testset)
+
+    # print predicted_label_f
+    # print testset
+
+    a, b = evaluationRes(predicted_label_f, testset)
+
+    print a, b
 
     print "--------------------------------------------"
 
-    originSVM(trainset, testset)
+    predicted_label_nf = originSVM(trainset, testset)
+    c, d = evaluationRes(predicted_label_nf, testset)
+    print c, d
+    # confusion_matrix(testset[-1], predicted_label_nf)
+
 
 
 
