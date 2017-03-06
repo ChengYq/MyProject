@@ -5,19 +5,18 @@
 def formatlib(feature, label):
     # 本函数的目的是：生成对应libsvm可用的数据格式
     # 输入：应当是训练集（已经经过特征选择过的）
-    y = []
+
     x = []
     for i in range(len(feature)):
-        if label[i] == u'true':
-            a = 1
-        else:
-            a = -1
-        y.append(a)
+        # if label[i] == u'true':
+        #     a = 1
+        # else:
+        #     a = -1
+        # y.append(a)
         x.append(dict(zip(range(1, len(feature[1]) + 1), feature[i])))
-    print y
-    print x
-    return x, y
 
+    print x
+    return x, label
 
 
 def test():

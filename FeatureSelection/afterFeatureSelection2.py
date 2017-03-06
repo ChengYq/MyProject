@@ -1,11 +1,11 @@
 # coding=utf-8
-
+# 这个代码是为了配合OriginSvm2进行使用的
 import numpy as np
 from FeatureSelection import bagging
 from FeatureSelection import reliefF
 
 
-def selectedSet(feature, label, attribute):
+def selectedSet(feature, label, attribute, origin_faeature):
     # 本函数的目的：根据前边的特征选择部分，返回一个特征选择后的数据集
     # 基本思路： bagging + featureSelection
     # 输入 测试集！不要输入bagging后的！！！
@@ -45,7 +45,7 @@ def selectedSet(feature, label, attribute):
     print len(count)
 
     # 列表生成器。 将那些出现次数大于12的下标拿出来，存储进feature_index中
-    feature_index = [i for i in range(len(count)) if count[i] >= 10]
+    feature_index = [i for i in range(len(count)) if count[i] >= 14]
 
     print len(feature_index)
 
@@ -57,8 +57,11 @@ def selectedSet(feature, label, attribute):
         if i in feature_index:
             final_attribute.append(attribute[i])
 
-    aaa = np.c_[feature, label]
+    final_attribute.append((u'Defective', [u'1.0', u'-1.0']))
+
+    aaa = np.c_[origin_faeature, label]
     # 为了生成特征子集，转为ndarray就可以使用切片功能了，相当的方便
+    feature_index.append(-1)
 
     resSet = aaa[:, feature_index]
     resSet = resSet.tolist()

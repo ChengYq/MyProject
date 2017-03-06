@@ -3,7 +3,6 @@
 import numpy as np
 from random import randrange
 
-from sklearn.datasets import make_classification
 from sklearn.preprocessing import normalize
 
 
@@ -34,11 +33,11 @@ def fit(dataSet, iter_ratio):
     labels = []
     for i in dataSet:
         # print list(i)[:-1]
-        features.append(list(i)[:-1])
-        labels.append(list(i)[-1])
+        features.append(i[:-1])
+        labels.append(i[-1])
 
-    # 归一化
-    features = normalize(X=features, norm='l2', axis=0)
+    # # 归一化
+    # features = normalize(X=features, norm='l2', axis=0)
 
     # 以下代码用来产生reliefF函数
     (n_samples, n_features) = np.shape(features)

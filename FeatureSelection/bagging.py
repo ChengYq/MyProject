@@ -1,20 +1,22 @@
 # coding=utf-8
-def bagIt(dataSet):
-    # 输入：dataSet为List类型的,输入应该是训练集
+def bagIt(feature, label):
+    # 输入：dataSet为ndarray类型的,输入应该是训练集
     # 返回：经过bagging后的数据集子集
     noDefectCount = 0  # 初始化无缺陷数据个数
     defectCount = 0  # 初始化有缺陷数据个数
     defectSet = []  # 初始化有缺陷的数据 ，最后用于记录有缺陷和无缺陷的数据
     noDefectSet = []  # 初始化无缺陷的数据
-    for i in dataSet:
-        #分别记录有、无缺陷
-        if i[-1].lower() in ['true', 'y', 'yes']:
-            defectCount += 1
-            defectSet.append(i)
+    import numpy as np
 
-        elif i[-1].lower() in ['false', 'n', 'no']:
+    for i in range(len(label)):
+        #分别记录有、无缺陷
+        if label[i] == 1:
+            defectCount += 1
+            defectSet.append(np.append(feature[i], label[i]))
+
+        else:
             noDefectCount += 1
-            noDefectSet.append(i)
+            noDefectSet.append(np.append(feature[i], label[i]))
 
     # 产生随机数
     seq = range(len(noDefectSet))

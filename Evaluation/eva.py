@@ -1,6 +1,7 @@
 # coding=utf-8
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import classification_report
+import numpy
 
 
 def myConvert(x):
@@ -36,7 +37,7 @@ def evaluationRes(y_pred, y_actual):
         # 如果输入的只是label，而不带有前边的feature部分,而且已经确定label是true false这种样子的
         y_actual_label = map(myConvert, y_actual)
 
-    elif isinstance(y_actual[0], list):
+    elif (isinstance(y_actual[0], list)) or (isinstance(y_actual[0], numpy.ndarray)):
         # 如果输入的是带有feature的数据集，而不是仅仅只有Label
         for i in y_actual:
             # print i
