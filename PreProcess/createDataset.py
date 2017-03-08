@@ -28,7 +28,7 @@ def createDataSet(arffPath, fold):
     for j in seq[testNum:]:
         trainSet.append(data[j])
 
-    return data, trainSet, testSet, relation, attribute[:-1]
+    return data, trainSet, testSet, relation, attribute
     # 这个里边的数据，是numpy.float64类型的。需要注意！
 
 

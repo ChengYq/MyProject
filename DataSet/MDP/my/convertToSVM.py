@@ -1,19 +1,12 @@
 import sys
-import random
-
-if (len(sys.argv) < 3):
-    print("usage: ./python convertToSVM.py inputfilename train test")
-# print sys.argv[1]
 
 inputfilename = sys.argv[1]
 fin = open(inputfilename, 'r')
 lines = fin.readlines()
 fin.close()
 outputfilename1 = sys.argv[2]
-train1 = open(outputfilename1, 'w')
-outputfilename2 = sys.argv[3]
-test1 = open(outputfilename2, 'w')
-seq = range(100)
+res = open(outputfilename1, 'w')
+
 
 beginToRead = False
 for line in lines:
@@ -33,13 +26,9 @@ for line in lines:
                 resultLine += str(i)
                 resultLine += (":" + dataList[i] + " ")
             # print(resultLine)
-            if random.choice(seq) < 20:
-                test1.write(resultLine + "\n")
-            else:
-                train1.write(resultLine + "\n")
+            res.write(resultLine + "\n")
 
     if line[0:5].lower() == '@data':
         beginToRead = True
 
-train1.close()
-test1.close()
+res.close()

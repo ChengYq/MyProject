@@ -1,8 +1,10 @@
 import sys
 
 # filePath = sys.argv[1]
-filePathPredit = '/home/chyq/Download/libsvm-3.22/tools/my_kc1.test.predict'
-filePathTest = '/home/chyq/Download/libsvm-3.22/tools/my_kc1.test.scale'
+# filePathPredit = '/home/chyq/Document/MyProject/DataSet/MDP/my/my_kc1_featured.predict'
+# filePathPredit = '/home/chyq/Document/MyProject/DataSet/MDP/my/my_kc1_origin.predict'
+filePathPredit = '/home/chyq/Document/MyProject/DataSet/MDP/my/my_kc1_corr.predict'
+filePathTest = '/home/chyq/Document/MyProject/DataSet/MDP/my/my_kc1_test'
 
 try:
     f = open(filePathPredit, 'r')
