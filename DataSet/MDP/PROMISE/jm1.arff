@@ -223,7 +223,7 @@
 %     LOC, Lines of Code.
 % 
 %     -- Cyclomatic Complexity, or "v(G)", measures the number of
-%     "linearly independent paths". A set of paths is said to be 
+%     "linearly independent paths". A set of paths is said to be
 %     linearly independent if no path in the set is a linear combination
 %     of any other paths in the set through a program's "flowgraph". A
 %     flowgraph is a directed graph where each node corresponds to a

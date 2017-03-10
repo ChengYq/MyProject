@@ -1,8 +1,9 @@
 # coding=utf-8
-# 这个代码是为了配合CreateArff进行使用的
+# 这个代码是为了 Bagging + Correlation 进行使用的
 import numpy as np
 from FeatureSelection import bagging
 from FeatureSelection import reliefF
+from FeatureSelection import correlation
 
 
 def selectedSet(feature, label, attribute, origin_faeature):
@@ -18,26 +19,21 @@ def selectedSet(feature, label, attribute, origin_faeature):
         # 进行bagging操作，将bagging后的结果返回给baggedDataSet
         baggedDataSet = bagging.bagIt(feature, label)
         # 计算reliefF，进行10次，然后求权值的平均值，
-        index = reliefF.avgWeight(baggedDataSet, 10)
+        # index = reliefF.avgWeight(baggedDataSet, 10)
         # 将权值进行排序，zip方法是为了返回下标方便些
-        res = sorted(zip(index, range(len(index))), key=lambda x: x[0], reverse=True)
-        # featureNum记录了那些被特征选择选中的下标号码
-        featureNum = []
+        baggedDataSet = np.array(baggedDataSet)
+        bagged_features = baggedDataSet[:, :-1]
+        toDelete = correlation.corr(bagged_features)
 
-        # for循环是为了选择出权值大于1的那些特征，将其记录在featureNum中
-        # 这里是可以再修改修改条件
-        for ii in res:
-            # print type(ii)
-            # print ii[1]
-            if ii[0] >= 0:
-                featureNum.append(ii[1])
-        # print i
+        feature_index = range(len(feature[1]))
+        for i in feature_index:
+            if i in toDelete:
+                feature_index.remove(i)
 
-        print featureNum
-        # print len(baggedDataSet[1])-1
+        print feature_index
 
         # 将fearueNum里边的数遍历，将对应下标+=1
-        for i in featureNum:
+        for i in feature_index:
             count[i] += 1
 
     print '--------------------'
@@ -45,8 +41,9 @@ def selectedSet(feature, label, attribute, origin_faeature):
     print len(count)
 
     # 列表生成器。 将那些出现次数大于12的下标拿出来，存储进feature_index中
-    feature_index = [i for i in range(len(count)) if count[i] >= 14]
+    feature_index = [i for i in range(len(count)) if count[i] >= 0]
 
+    print feature_index
     print len(feature_index)
 
     # feature_index.append(-1)  # 这个代码是为了增加-1这个索引，就是将label也要存进去。
@@ -74,11 +71,28 @@ def selectedSet(feature, label, attribute, origin_faeature):
 
 
 def test():
-    from PreProcess import createDataset
+    from PreProcess.createDataset import createDataSet
     from os import path
-    filePath = path.abspath(path.join(path.dirname(__file__), path.pardir, r'DataSet', r'MDP', r'PROMISE', r'cm1.arff'))
-    trainset, testset = createDataset.createDataSet(filePath, 5)
-    r = selectedSet(trainset)
+    from FeatureSelection import afterFeatureSelection3
+    from PreProcess.minmax2 import minmaxscaler
+    from PreProcess.createDataset import featureAndLabel
+
+    filePath = path.abspath(path.join(path.dirname(__file__), path.pardir, r'DataSet', r'MDP', r'D1', r'KC1.arff'))
+
+    data, trainsetWithLabel, testsetWithLabel, relation, attribute = createDataSet(filePath, 5)
+
+    # featureSet = bagging.bagIt(trainset)
+
+    # 分离出训练集、测试集的feature, label
+    train_feature, train_label = featureAndLabel(trainsetWithLabel)
+    test_feature, test_label = featureAndLabel(testsetWithLabel)
+
+    # 做normalization 得出的结果在trainset, test。
+    trainset, x_min, x_max = minmaxscaler(train_feature)
+    testset = minmaxscaler(test_feature, x_feature_min=x_min, x_feature_max=x_max)
+
+    featured_trainset, featured_attribute = afterFeatureSelection3.selectedSet(trainset, train_label, attribute,
+                                                                               train_feature)
 
 
 if __name__ == '__main__':

@@ -12,6 +12,7 @@
 # 1. 原始的训练集、测试集
 # 2. bagging+ReliefF的训练集、测试集
 # 3. 出去Correlation的训练集、测试集
+# 4. Bagging+ Correlation/Spearman的训练集、测试集
 
 # 然后放进 easy.py 训练
 import numpy as np
@@ -114,6 +115,14 @@ def test():
 
 
     # 到此已经执行成功！！！
+
+
+    ########################
+    featured_trainset, featured_attribute = afterFeatureSelection2.selectedSet(trainset, train_label, attribute,
+                                                                               train_feature)
+
+
+
 
 
 if __name__ == '__main__':

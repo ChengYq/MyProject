@@ -1,7 +1,7 @@
 # coding=utf-8
 def bagIt(feature, label):
     # 输入：dataSet为ndarray类型的,输入应该是训练集
-    # 返回：经过bagging后的数据集子集
+    # 返回：经过bagging后的数据集子集,含有label
     noDefectCount = 0  # 初始化无缺陷数据个数
     defectCount = 0  # 初始化有缺陷数据个数
     defectSet = []  # 初始化有缺陷的数据 ，最后用于记录有缺陷和无缺陷的数据

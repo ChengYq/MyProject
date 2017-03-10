@@ -58,7 +58,6 @@ def test():
     test_feature, test_label = featureAndLabel(testset)
 
     trainset, x_min, x_max = minmaxscaler(train_feature)
-
     testset = minmaxscaler(test_feature, x_feature_min=x_min, x_feature_max=x_max)
 
     featured_trainset, attribute = afterFeatureSelection.selectedSet(trainset, train_label, attribute)
