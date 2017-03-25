@@ -6,6 +6,7 @@ def bagIt(feature, label):
     defectCount = 0  # 初始化有缺陷数据个数
     defectSet = []  # 初始化有缺陷的数据 ，最后用于记录有缺陷和无缺陷的数据
     noDefectSet = []  # 初始化无缺陷的数据
+
     import numpy as np
 
     for i in range(len(label)):

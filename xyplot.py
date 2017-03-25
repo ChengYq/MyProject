@@ -23,12 +23,18 @@ def test():
     test_feature, test_label = featureAndLabel(testsetWithLabel)
 
     # 做normalization 得出的结果在trainset, test。
-    trainset, x_min, x_max = minmaxscaler(train_feature)
+    trainset, x_min, x_max = minmaxscaler(train_feature, lower=-1)
     testset = minmaxscaler(test_feature, x_feature_min=x_min, x_feature_max=x_max)
 
-    x = list(trainset[:, 12])
-    y = list(trainset[:, 16])
-    plt.scatter(x, y)
+    from sklearn import preprocessing
+    # trainset = preprocessing.scale(train_feature)
+    # testset = preprocessing.scale(test_feature)
+
+
+    # x = list(trainset[:, 12])
+    # y = list(trainset[:, 16])
+    # plt.scatter(x, y)
+    plt.hist(trainset[:, 13])
     plt.show()
 
 

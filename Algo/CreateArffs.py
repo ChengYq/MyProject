@@ -11,8 +11,8 @@
 # 生成以下文件
 # 1. 原始的训练集、测试集
 # 2. bagging+ReliefF的训练集、测试集
-# 3. 出去Correlation的训练集、测试集
-# 4. Bagging+ Correlation/Spearman的训练集、测试集
+# 3. 除去Correlation的训练集、测试集
+# 4. Bagging+Correlation+Information(ratio)的训练集、测试集
 
 # 然后放进 easy.py 训练
 import numpy as np
@@ -35,10 +35,16 @@ def test():
     test_feature, test_label = featureAndLabel(testsetWithLabel)
 
     # 做normalization 得出的结果在trainset, test。
-    trainset, x_min, x_max = minmaxscaler(train_feature)
+    trainset, x_min, x_max = minmaxscaler(train_feature, lower=-1)
     testset = minmaxscaler(test_feature, x_feature_min=x_min, x_feature_max=x_max)
 
+    # from sklearn import preprocessing
+    # trainset = preprocessing.scale(train_feature)
+    # testset = preprocessing.scale(test_feature)
+
+
     ############################
+    # 1.
     # 生成原始的arff,包括训练集、测试集
 
     origin_train = np.c_[trainset, train_label]
@@ -64,6 +70,7 @@ def test():
 
     #############################
 
+    # 2.
     # 生成Bagging+ReliefF的特征子集，需要注意的是，attribute已经经过了处理。数量和featureed_trainset是一样的
     featured_trainset, featured_attribute = afterFeatureSelection2.selectedSet(trainset, train_label, attribute,
                                                                                train_feature)
@@ -80,6 +87,7 @@ def test():
 
 
     #############################
+    # 3.
     # 下边这里的代码：是用于检索出那些重复的下标，放进toDelete内
     # 事实证明，是否经过了featureSelection，对计算Corr几乎没有影响
 
@@ -98,8 +106,6 @@ def test():
 
     # arff_obj = {'relation': relation, 'attributes': attribute, 'data': featured_trainset}
 
-
-
     to2 = arff.dumps(arff_obj)
     try:
         f = open('/home/chyq/Document/MyProject/DataSet/MDP/my/my_kc1_corr.arff', 'w')
@@ -107,21 +113,21 @@ def test():
     finally:
         f.close()
 
-    ###################
-
-
-
-    # 这里生成一下arff文件，
-
-
-    # 到此已经执行成功！！！
-
-
-    ########################
-    featured_trainset, featured_attribute = afterFeatureSelection2.selectedSet(trainset, train_label, attribute,
+    ####################
+    # 4.
+    from FeatureSelection import afterFeatureSelection3
+    featured_trainset, featured_attribute = afterFeatureSelection3.selectedSet(trainset, train_label, attribute,
                                                                                train_feature)
 
+    arff_obj = {'relation': relation, 'attributes': featured_attribute, 'data': featured_trainset}
 
+    # 写入to3
+    to3 = arff.dumps(arff_obj)
+    try:
+        f = open('/home/chyq/Document/MyProject/DataSet/MDP/my/my_kc1_info.arff', 'w')
+        f.write(to3)
+    finally:
+        f.close()
 
 
 

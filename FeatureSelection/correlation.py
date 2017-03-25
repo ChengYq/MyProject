@@ -40,8 +40,12 @@ def test():
     test_feature, test_label = featureAndLabel(testsetWithLabel)
 
     # 做normalization 得出的结果在trainset, test。
-    trainset, x_min, x_max = minmaxscaler(train_feature)
-    testset = minmaxscaler(test_feature, x_feature_min=x_min, x_feature_max=x_max)
+    # trainset, x_min, x_max = minmaxscaler(train_feature)
+    # testset = minmaxscaler(test_feature, x_feature_min=x_min, x_feature_max=x_max)
+
+    from sklearn import preprocessing
+    trainset = preprocessing.scale(train_feature)
+    testset = preprocessing.scale(test_feature)
 
     toDelete = corr(trainset)
 

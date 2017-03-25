@@ -1,5 +1,5 @@
 # coding=utf-8
-# 这个代码是为了 Bagging + Correlation 进行使用的
+# 这个代码是为了 Bagging + Correlation + InfoGain 进行使用的
 import numpy as np
 from FeatureSelection import bagging
 from FeatureSelection import reliefF
@@ -23,38 +23,58 @@ def selectedSet(feature, label, attribute, origin_faeature):
         # 将权值进行排序，zip方法是为了返回下标方便些
         baggedDataSet = np.array(baggedDataSet)
         bagged_features = baggedDataSet[:, :-1]
+        bagged_labels = baggedDataSet[:, -1]
         toDelete = correlation.corr(bagged_features)
 
-        feature_index = range(len(feature[1]))
-        for i in feature_index:
-            if i in toDelete:
-                feature_index.remove(i)
+        from FeatureSelection.GainRatio import information_gain
+        toDelete_info_gain = []
+        toDelete_gain_ratio = []
 
-        print feature_index
+        # 这个是为了使用信息增益
+        info_gain, gain_ratio = information_gain(bagged_features, bagged_labels)
 
-        # 将fearueNum里边的数遍历，将对应下标+=1
-        for i in feature_index:
+        for i in info_gain[:3]:
+            toDelete_info_gain.append(i[1])
+
+        for i in gain_ratio[:3]:
+            toDelete_gain_ratio.append(i[1])
+
+        final_attribute_index = []
+
+        for i in range(len(feature[1])):
+
+            # 下边这个代码。主要是选择筛选条件的
+            # if (i not in toDelete) and (i not in toDelete_info_gain):
+            if (i not in toDelete) and (i not in toDelete_gain_ratio):
+                # feature_index.remove(i)
+                final_attribute_index.append(i)
+
+        print final_attribute_index
+
+        # 记录某个特征被选中的次数
+        for i in final_attribute_index:
             count[i] += 1
 
     print '--------------------'
     # print filter(lambda x:x>=15,count)
     print len(count)
 
+    print count
     # 列表生成器。 将那些出现次数大于12的下标拿出来，存储进feature_index中
-    feature_index = [i for i in range(len(count)) if count[i] >= 0]
+    feature_index = [i for i in range(len(count)) if count[i] >= 15]
 
     print feature_index
     print len(feature_index)
 
     # feature_index.append(-1)  # 这个代码是为了增加-1这个索引，就是将label也要存进去。
 
-    final_attribute = []
+    final_attribute_name = []
 
     for i in range(len(attribute)):
         if i in feature_index:
-            final_attribute.append(attribute[i])
+            final_attribute_name.append(attribute[i])
 
-    final_attribute.append((u'Defective', [u'1.0', u'-1.0']))
+    final_attribute_name.append((u'Defective', [u'1.0', u'-1.0']))
 
     aaa = np.c_[origin_faeature, label]
     # 为了生成特征子集，转为ndarray就可以使用切片功能了，相当的方便
@@ -62,9 +82,9 @@ def selectedSet(feature, label, attribute, origin_faeature):
 
     resSet = aaa[:, feature_index]
     resSet = resSet.tolist()
-    print resSet
+    # print resSet
     # 这里的res是List类型的
-    return resSet, final_attribute
+    return resSet, final_attribute_name
 
     # for i in rangepython  二维数组 列索引(len(dataSet)):
     #     if i in feature_index:
