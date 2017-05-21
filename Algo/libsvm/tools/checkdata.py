@@ -15,10 +15,8 @@
 from sys import argv, exit
 import os.path
 
-
 def err(line_no, msg):
     print("line {0}: {1}".format(line_no, msg))
-
 
 # works like float() but does not accept nan and inf
 def my_float(x):
@@ -26,7 +24,6 @@ def my_float(x):
         raise ValueError
 
     return float(x)
-
 
 def main():
     if len(argv) != 2:
@@ -109,7 +106,6 @@ def main():
     else:
         print("No error.")
         return 0
-
 
 if __name__ == "__main__":
     exit(main())

@@ -14,7 +14,6 @@ telnet_workers = []
 ssh_workers = []
 nr_local_worker = 1
 
-
 class GridOption:
     def __init__(self, dataset_pathname, options):
         dirname = os.path.dirname(__file__)
@@ -91,6 +90,7 @@ class GridOption:
             i = i + 1
 
         self.pass_through_string = ' '.join(pass_through_options)
+        # print self.svmtrain_pathname
         if not os.path.exists(self.svmtrain_pathname):
             raise IOError('svm-train executable not found')
         if not os.path.exists(self.dataset_pathname):
@@ -241,7 +241,6 @@ def calculate_jobs(options):
 class WorkerStopToken:  # used to notify the worker to stop or if a worker is dead
     pass
 
-
 class Worker(Thread):
     def __init__(self, name, job_queue, result_queue, options):
         Thread.__init__(self)
@@ -286,8 +285,7 @@ class Worker(Thread):
         cmdline += ' -v {0} {1} {2} '.format \
             (options.fold, options.pass_through_string, options.dataset_pathname)
         return cmdline
-
-
+		
 class LocalWorker(Worker):
     def run_one(self, c, g):
         cmdline = self.get_cmd(c, g)
@@ -295,7 +293,6 @@ class LocalWorker(Worker):
         for line in result.readlines():
             if str(line).find('Cross') != -1:
                 return float(line.split()[-1][0:-1])
-
 
 class SSHWorker(Worker):
     def __init__(self, name, job_queue, result_queue, host, options):
@@ -310,7 +307,6 @@ class SSHWorker(Worker):
         for line in result.readlines():
             if str(line).find('Cross') != -1:
                 return float(line.split()[-1][0:-1])
-
 
 class TelnetWorker(Worker):
     def __init__(self, name, job_queue, result_queue, host, username, password, options):
@@ -342,8 +338,7 @@ class TelnetWorker(Worker):
         for line in output.split('\n'):
             if str(line).find('Cross') != -1:
                 return float(line.split()[-1][0:-1])
-
-
+			
 def find_parameters(dataset_pathname, options=''):
     def update_param(c, g, rate, best_c, best_g, best_rate, worker, resumed):
         if (rate > best_rate) or (rate == best_rate and g == best_g and c < best_c):
@@ -498,6 +493,7 @@ svm_options : additional options for svm-train""")
         exit_with_help()
     dataset_pathname = sys.argv[-1]
     options = sys.argv[1:-1]
+    print options
     try:
         find_parameters(dataset_pathname, options)
     except (IOError, ValueError) as e:

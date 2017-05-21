@@ -8,11 +8,6 @@ def formatlib(feature, label):
 
     x = []
     for i in range(len(feature)):
-        # if label[i] == u'true':
-        #     a = 1
-        # else:
-        #     a = -1
-        # y.append(a)
         x.append(dict(zip(range(1, len(feature[1]) + 1), feature[i])))
 
     print x

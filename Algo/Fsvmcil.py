@@ -18,6 +18,12 @@ def create_weight(train_feature, train_label):
         else:
             train_feature_neg.append(train_feature[i, :])
 
+    pos_count = len(train_feature_pos)
+    neg_count = len(train_feature_neg)
+
+    imbalance_ratio = float(pos_count) / float(neg_count)
+
+    
     train_feature_pos_mean = np.mean(train_feature_pos, axis=0)
     train_feature_neg_mean = np.mean(train_feature_neg, axis=0)
 
@@ -25,12 +31,12 @@ def create_weight(train_feature, train_label):
         if train_label[i] == 1.0:
             temp = np.linalg.norm(train_feature[i, :] - train_feature_pos_mean)
             norm_pos.append(temp)
+            norm_total.append(temp)
         else:
             temp = np.linalg.norm(train_feature[i, :] - train_feature_neg_mean)
             norm_neg.append(temp)
-        norm_total.append(temp)
+            norm_total.append(temp)
 
-    print norm_total
 
     max_pos = max(norm_pos)
     max_neg = max(norm_neg)
@@ -40,18 +46,22 @@ def create_weight(train_feature, train_label):
             f = 1 - (float(norm_total[i]) / float(max_pos))
         else:
             f = 1 - (float(norm_total[i]) / float(max_neg))
+            f *= imbalance_ratio
 
-        print f
+        # print f
         noise_weight.append(f)
 
-    try:
-        f = open(r'/home/chyq/Document/MyProject/DataSet/MDP/my/weight.txt', 'w')
-        weight = [x + '\n' for x in map(str, noise_weight)]
-        f.writelines(weight)
-    finally:
-        f.close()
 
-    return f
+    # 以下代码是生成文件的，暂且注释掉
+    #     try:
+    #         f = open(r'/home/chyq/Document/MyProject/DataSet/MDP/my/weight.txt', 'w')
+    #         weight = [x + '\n' for x in map(str, noise_weight)]
+    #         f.writelines(weight)
+    #     finally:
+    #         f.close()
+    #
+    #     return f
+    return noise_weight
 
 
 def test():

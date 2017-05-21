@@ -1,6 +1,9 @@
 # coding=utf-8
+import numpy as np
+
+
 def minmaxscaler(feature, lower=0, upper=1, x_feature_min=None, x_feature_max=None):
-    import numpy as np
+
     x_feature = np.array(feature)
 
     if (x_feature_min is None) and (x_feature_max is None):

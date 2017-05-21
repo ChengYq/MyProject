@@ -6,7 +6,6 @@ from collections import defaultdict
 if sys.version_info[0] >= 3:
     xrange = range
 
-
 def exit_with_help(argv):
     print("""\
 Usage: {0} [options] dataset subset_size [output1] [output2]
@@ -22,7 +21,6 @@ output1 : the subset (optional)
 output2 : rest of the data (optional)
 If output1 is omitted, the subset will be printed on the screen.""".format(argv[0]))
     exit(1)
-
 
 def process_options(argv):
     argc = len(argv)
@@ -55,11 +53,9 @@ def process_options(argv):
 
     return dataset, subset_size, method, subset_file, rest_file
 
-
 def random_selection(dataset, subset_size):
     l = sum(1 for line in open(dataset, 'r'))
     return sorted(random.sample(xrange(l), subset_size))
-
 
 def stratified_selection(dataset, subset_size):
     labels = [line.split(None, 1)[0] for line in open(dataset)]
@@ -90,7 +86,6 @@ Please use -s 1.
         ret += [linenums[i] for i in random.sample(xrange(label_size), s)]
     return sorted(ret)
 
-
 def main(argv=sys.argv):
     dataset, subset_size, method, subset_file, rest_file = process_options(argv)
     # uncomment the following line to fix the random seed
@@ -119,7 +114,6 @@ def main(argv=sys.argv):
             rest_file.write(line)
         rest_file.close()
     dataset.close()
-
 
 if __name__ == '__main__':
     main(sys.argv)

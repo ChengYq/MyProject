@@ -1,15 +1,20 @@
 import sys
 
 # filePath = sys.argv[1]
-# filePathPredit = '/home/chyq/Document/MyProject/DataSet/MDP/my/my_kc1_featured.predict'
+
 # filePathPredit = '/home/chyq/Document/MyProject/DataSet/MDP/my/my_kc1_origin.predict'
 # filePathPredit = '/home/chyq/Document/MyProject/DataSet/MDP/my/my_kc1_corr.predict'
 # filePathPredit = '/home/chyq/Document/MyProject/DataSet/MDP/my/my_kc1_info.predict'
 
-# filePathPredit = '/home/chyq/Document/MyProject/DataSet/MDP/my/my_kc1_featured.predict_w'
+
 # filePathPredit = '/home/chyq/Document/MyProject/DataSet/MDP/my/my_kc1_origin.predict_w'
 # filePathPredit = '/home/chyq/Document/MyProject/DataSet/MDP/my/my_kc1_corr.predict_w'
-filePathPredit = '/home/chyq/Document/MyProject/DataSet/MDP/my/my_kc1_info.predict_w'
+# filePathPredit = '/home/chyq/Document/MyProject/DataSet/MDP/my/my_kc1_info.predict_w'
+
+
+# filePathPredit = '/home/chyq/Document/MyProject/DataSet/MDP/my/my_kc1_origin.predict_noise_w'
+# filePathPredit = '/home/chyq/Document/MyProject/DataSet/MDP/my/my_kc1_corr.predict_noise_w'
+# filePathPredit = '/home/chyq/Document/MyProject/DataSet/MDP/my/my_kc1_info.predict_noise_w'
 
 filePathTest = '/home/chyq/Document/MyProject/DataSet/MDP/my/my_kc1_test'
 

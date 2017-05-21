@@ -4,7 +4,7 @@
 
 from Algo.libsvm.myPython.svm import *
 from Algo.libsvm.myPython.svmutil import *
-from Algo import libsvmFormat
+from Algo import LibsvmFormat
 
 
 def originSVM(train_features, train_labels, test_features, test_labels):
@@ -27,8 +27,8 @@ def originSVM(train_features, train_labels, test_features, test_labels):
     #     test_features.append(list(i)[:-1])
     #     test_labels.append(list(i)[-1])
 
-    x, y = libsvmFormat.formatlib(train_features, train_labels)
-    xtest, ytest = libsvmFormat.formatlib(test_features, test_labels)
+    x, y = LibsvmFormat.formatlib(train_features, train_labels)
+    xtest, ytest = LibsvmFormat.formatlib(test_features, test_labels)
     prob = svm_problem(y, x)
     param = svm_parameter('-c 32 -g 0.125')  # 这里值得继续研究研究！
     #  问题就是在这里！！ 一般C比较大，gamma取0.5的时候，效果还是可以的

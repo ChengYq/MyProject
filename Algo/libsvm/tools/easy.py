@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# original SVM
 
 import sys
 import os
@@ -12,11 +13,11 @@ if len(sys.argv) <= 1:
 
 is_win32 = (sys.platform == 'win32')
 if not is_win32:
-    svmscale_exe = "../svm-scale"
-    svmtrain_exe = "../svm-train"
-    svmpredict_exe = "../svm-predict"
-    grid_py = "./grid.py"
-    gnuplot_exe = "/usr/bin/gnuplot"
+    svmscale_exe = r"/home/chyq/Document/MyProject/Algo/libsvm/svm-scale"
+    svmtrain_exe = r"/home/chyq/Document/MyProject/Algo/libsvm/svm-train"
+    svmpredict_exe = r"/home/chyq/Document/MyProject/Algo/libsvm/svm-predict"
+    grid_py = r"/home/chyq/Document/MyProject/Algo/libsvm/tools/grid.py"
+    gnuplot_exe = r"/usr/bin/gnuplot"
 else:
     # example for windows
     svmscale_exe = r"..\windows\svm-scale.exe"
@@ -34,20 +35,25 @@ assert os.path.exists(grid_py), "grid.py not found"
 train_pathname = sys.argv[1]
 assert os.path.exists(train_pathname), "training file not found"
 file_name = os.path.split(train_pathname)[1]
-scaled_file = file_name + ".scale"
+
+scaled_file = file_name
+# scaled_file = file_name + ".scale"
 model_file = file_name + ".model"
 range_file = file_name + ".range"
 
 if len(sys.argv) > 2:
     test_pathname = sys.argv[2]
-    file_name = os.path.split(test_pathname)[1]
+    file_name2 = os.path.split(test_pathname)[1]
     assert os.path.exists(test_pathname), "testing file not found"
-    scaled_test_file = file_name + ".scale"
+    # scaled_test_file = file_name2 + ".scale"
+    scaled_test_file = file_name2
     predict_test_file = file_name + ".predict"
 
-cmd = '{0} -s "{1}" "{2}" > "{3}"'.format(svmscale_exe, range_file, train_pathname, scaled_file)
-print('Scaling training data...')
-Popen(cmd, shell=True, stdout=PIPE).communicate()
+# I'v done the scaling process!!!
+
+# cmd = '{0} -s "{1}" "{2}" > "{3}"'.format(svmscale_exe, range_file, train_pathname, scaled_file)
+# print('Scaling training data...')
+# Popen(cmd, shell = True, stdout = PIPE).communicate()	
 
 cmd = '{0} -svmtrain "{1}" -gnuplot "{2}" "{3}"'.format(grid_py, svmtrain_exe, gnuplot_exe, scaled_file)
 print('Cross validation...')
@@ -68,9 +74,9 @@ Popen(cmd, shell=True, stdout=PIPE).communicate()
 
 print('Output model: {0}'.format(model_file))
 if len(sys.argv) > 2:
-    cmd = '{0} -r "{1}" "{2}" > "{3}"'.format(svmscale_exe, range_file, test_pathname, scaled_test_file)
-    print('Scaling testing data...')
-    Popen(cmd, shell=True, stdout=PIPE).communicate()
+    # cmd = '{0} -r "{1}" "{2}" > "{3}"'.format(svmscale_exe, range_file, test_pathname, scaled_test_file)
+    # print('Scaling testing data...')
+    # Popen(cmd, shell = True, stdout = PIPE).communicate()
 
     cmd = '{0} "{1}" "{2}" "{3}"'.format(svmpredict_exe, scaled_test_file, model_file, predict_test_file)
     print('Testing...')

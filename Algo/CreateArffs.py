@@ -13,6 +13,7 @@
 # 2. bagging+ReliefF的训练集、测试集
 # 3. 除去Correlation的训练集、测试集
 # 4. Bagging+Correlation+Information(ratio)的训练集、测试集
+# 5. 生成noiseWeight,用来消除outliner的影响
 
 # 然后放进 easy.py 训练
 import numpy as np
@@ -20,7 +21,7 @@ import numpy as np
 def test():
     from PreProcess.createDataset import createDataSet
     from os import path
-    from FeatureSelection import afterFeatureSelection2
+    from FeatureSelection import afterFeatureSelection4
     from PreProcess.minmax2 import minmaxscaler
     from PreProcess.createDataset import featureAndLabel
 
@@ -35,7 +36,7 @@ def test():
     test_feature, test_label = featureAndLabel(testsetWithLabel)
 
     # 做normalization 得出的结果在trainset, test。
-    trainset, x_min, x_max = minmaxscaler(train_feature, lower=-1)
+    trainset, x_min, x_max = minmaxscaler(train_feature)
     testset = minmaxscaler(test_feature, x_feature_min=x_min, x_feature_max=x_max)
 
     # from sklearn import preprocessing
@@ -70,10 +71,11 @@ def test():
 
     #############################
 
-    # 2.
-    # 生成Bagging+ReliefF的特征子集，需要注意的是，attribute已经经过了处理。数量和featureed_trainset是一样的
-    featured_trainset, featured_attribute = afterFeatureSelection2.selectedSet(trainset, train_label, attribute,
-                                                                               train_feature)
+    2.
+    # 生成Bagging+Correlation 的特征子集，需要注意的是，attribute已经经过了处理。数量和featureed_trainset是一样的
+    featured_trainset, featured_attribute = afterFeatureSelection4.selectedSet(trainset, train_label, attribute,
+                                                                               trainset)
+    print "bagging+corr", len(featured_attribute)
 
     arff_obj = {'relation': relation, 'attributes': featured_attribute, 'data': featured_trainset}
 
@@ -99,6 +101,7 @@ def test():
         if i not in toDelete:
             Corr_attribute.append(attribute[i])
 
+    print "corr len", len(Corr_attribute)
     t = np.c_[trainset, train_label]
     noCorr_data = np.delete(t, toDelete, axis=1)
 
@@ -121,6 +124,7 @@ def test():
 
     arff_obj = {'relation': relation, 'attributes': featured_attribute, 'data': featured_trainset}
 
+    print "info_gain", len(featured_attribute)
     # 写入to3
     to3 = arff.dumps(arff_obj)
     try:
@@ -129,6 +133,12 @@ def test():
     finally:
         f.close()
 
+
+        ######
+        # 5
+        # 写入一个文件，方便读取
+    from Algo import Fsvmcil
+    Fsvmcil.create_weight(trainset, train_label)
 
 
 if __name__ == '__main__':

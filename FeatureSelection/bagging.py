@@ -1,4 +1,5 @@
 # coding=utf-8
+import numpy as np
 def bagIt(feature, label):
     # 输入：dataSet为ndarray类型的,输入应该是训练集
     # 返回：经过bagging后的数据集子集,含有label
@@ -7,7 +8,6 @@ def bagIt(feature, label):
     defectSet = []  # 初始化有缺陷的数据 ，最后用于记录有缺陷和无缺陷的数据
     noDefectSet = []  # 初始化无缺陷的数据
 
-    import numpy as np
 
     for i in range(len(label)):
         #分别记录有、无缺陷
