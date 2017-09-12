@@ -21,7 +21,7 @@ import numpy as np
 def test():
     from PreProcess.createDataset import createDataSet
     from os import path
-    from FeatureSelection import afterFeatureSelection4
+    from FeatureSelection import FeatureSelectionProcess
     from PreProcess.minmax2 import minmaxscaler
     from PreProcess.createDataset import featureAndLabel
 
@@ -73,8 +73,8 @@ def test():
 
     2.
     # 生成Bagging+Correlation 的特征子集，需要注意的是，attribute已经经过了处理。数量和featureed_trainset是一样的
-    featured_trainset, featured_attribute = afterFeatureSelection4.selectedSet(trainset, train_label, attribute,
-                                                                               trainset)
+    featured_trainset, featured_attribute = FeatureSelectionProcess.selectedSet(trainset, train_label, attribute,
+                                                                                trainset)
     print "bagging+corr", len(featured_attribute)
 
     arff_obj = {'relation': relation, 'attributes': featured_attribute, 'data': featured_trainset}

@@ -15,26 +15,29 @@ def selectedSet(feature, label, attribute, origin_faeature):
     # count有点哈希的意味，初始全0，长度等于feature的个数。
     # range里边就是bagging的次数
     final_toDelete = []
-    for i in range(20):
+    for i in range(1):
         # 进行bagging操作，将bagging后的结果返回给baggedDataSet
-        baggedDataSet = bagging.bagIt(feature, label)
+        # baggedDataSet = bagging.bagIt(feature, label)
         # 计算reliefF，进行10次，然后求权值的平均值，
         # 将权值进行排序，zip方法是为了返回下标方便些
-        baggedDataSet = np.array(baggedDataSet)
-        bagged_features = baggedDataSet[:, :-1]
-        bagged_labels = baggedDataSet[:, -1]
+        # baggedDataSet = np.array(baggedDataSet)
+        # bagged_features = baggedDataSet[:, :-1]
+        # bagged_labels = baggedDataSet[:, -1]
+        bagged_features = feature
+        # bagged_labels=label
         toDelete = correlation.corr(bagged_features)
         print toDelete
         final_toDelete.append(toDelete)
 
-    common_toDelete = set(final_toDelete[0])
-    for i in range(1, len(final_toDelete)):
-        common_toDelete = common_toDelete.intersection(set(final_toDelete[i]))
+    # common_toDelete = set(final_toDelete[0])
+    # for i in range(1, len(final_toDelete)):
+    #     common_toDelete = common_toDelete.intersection(set(final_toDelete[i]))
+    #
+    # print common_toDelete
+    #
+    # print '--------------------'
+    common_toDelete = toDelete
 
-    print common_toDelete
-
-    print '--------------------'
-    # print filter(lambda x:x>=15,count)
 
     # 列表生成器。 将那些出现次数大于12的下标拿出来，存储进feature_index中
 
@@ -45,6 +48,7 @@ def selectedSet(feature, label, attribute, origin_faeature):
             final_attribute_name.append(attribute[i])
             feature_index.append(i)
 
+    print feature_index
     aaa = np.c_[origin_faeature, label]
     # 为了生成特征子集，转为ndarray就可以使用切片功能了，相当的方便
 
@@ -61,7 +65,7 @@ def selectedSet(feature, label, attribute, origin_faeature):
 def test():
     from PreProcess.createDataset import createDataSet
     from os import path
-    from FeatureSelection import afterFeatureSelection4
+    from FeatureSelection import FeatureSelectionProcess
     from PreProcess.minmax2 import minmaxscaler
     from PreProcess.createDataset import featureAndLabel
 
@@ -79,8 +83,8 @@ def test():
     trainset, x_min, x_max = minmaxscaler(train_feature)
     testset = minmaxscaler(test_feature, x_feature_min=x_min, x_feature_max=x_max)
 
-    featured_trainset, featured_attribute = afterFeatureSelection4.selectedSet(trainset, train_label, attribute,
-                                                                               train_feature)
+    featured_trainset, featured_attribute = FeatureSelectionProcess.selectedSet(trainset, train_label, attribute,
+                                                                                train_feature)
 
 
 if __name__ == '__main__':

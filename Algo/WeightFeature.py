@@ -1,14 +1,85 @@
 # coding=utf-8
+# 实现的是feature space的模糊隶属计算
+
+# coding=utf-8
 
 
 # f(x), x∈[lower_bound, upper_bound]
 # x = lower_bound + decimal(chromosome)×(upper_bound-lower_bound)/(2^chromosome_size-1)
 
 import random
-from Algo.libsvm.myPython.svmutil import *
+from Algo.libsvmWeight.python.svmutil import *
 from sklearn.metrics import f1_score
 import math
 import numpy as np
+
+
+def rbf(x, y, g):
+    a = np.linalg.norm(x - y)
+    b = 2 * g * g
+    return np.exp(-a * a / b)
+
+
+def distance(trainset, g):
+    # 输入的是训练集
+    # 返回的是一个数组
+    second = 0
+    count = len(trainset)
+    result = []
+    for k in range(count):
+        for j in range(count):
+            # print trainset[k], trainset[j]
+            second += rbf(trainset[k], trainset[j], g)
+
+    for i in range(count):
+        first = 0
+        for j in range(count):
+            first += rbf(trainset[i], trainset[j], g)
+
+        a = rbf(trainset[i], trainset[i], g)
+        b = (2.0 / count) * first
+        c = (1.0 / (count ** 2)) * second
+        temp = a - b + c
+        result.append(temp)
+
+    return result
+
+
+def create_weight(train_feature, train_label, g):
+    train_feature_pos = []
+    train_feature_neg = []
+    noise_weight = []
+    for i in range(len(train_label)):
+        if train_label[i] == 1.0:
+            train_feature_pos.append(train_feature[i, :])
+        else:
+            train_feature_neg.append(train_feature[i, :])
+
+    pos_count = len(train_feature_pos)
+    neg_count = len(train_feature_neg)
+
+    imbalance_ratio = float(pos_count) / float(neg_count)
+
+    pos_dis = distance(train_feature_pos, g)
+    neg_dis = distance(train_feature_neg, g)
+
+    radius_pos = max(pos_dis)
+    radius_neg = max(neg_dis)
+
+    ii = 0
+    iii = 0
+    for i in range(len(train_label)):
+        if train_label[i] == 1.0:
+            f = 1 - np.sqrt(float(pos_dis[ii]) / float(radius_pos))
+            ii += 1
+        else:
+            f = 1 - np.sqrt(float(neg_dis[iii]) / float(radius_neg))
+            f *= imbalance_ratio
+            iii += 1
+
+        # print f
+        noise_weight.append(f)
+    return noise_weight
 
 
 def b2d(b):  # 将二进制转化为十进制 x∈[0,10]
@@ -16,7 +87,7 @@ def b2d(b):  # 将二进制转化为十进制 x∈[0,10]
     tempg = int(''.join(str(e) for e in b[13:]), 2)
 
     c = 1 + tempC * (8000 - 1) / (2 ** 13 - 1)
-    g = 0.0001 + tempg * (10 - 0.0001) / (2 ** 10 - 1)
+    g = 0.01 + tempg * (1 - 0.01) / (2 ** 10 - 1)
 
     return c, g
 
@@ -42,7 +113,7 @@ def decodechrom(pop):  # 将种群的二进制基因转化为十进制（0,1023�
     return temp
 
 
-def calobjvalue(pop, y, x, yt, xt):  # 计算目标函数值
+def calobjvalue(pop, y, x, yt, xt, featured_trainset, train_label):  # 计算目标函数值
     tempC = []
     tempg = []
     objvalue = []
@@ -51,11 +122,12 @@ def calobjvalue(pop, y, x, yt, xt):  # 计算目标函数值
         tempg.append(int(''.join(str(e) for e in pop[i][13:]), 2))
     for i in range(len(tempC)):
         c = 1 + tempC[i] * (8000 - 1) / (2 ** 13 - 1)
-        g = 0.0001 + tempg[i] * (10 - 0.0001) / (2 ** 10 - 1)
-
+        g = 0.01 + tempg[i] * (1 - 0.01) / (2 ** 10 - 1)
+        print '-------------'
         print c, g
 
-        prob = svm_problem(y, x)
+        W = create_weight(featured_trainset, train_label, g)
+        prob = svm_problem(W, y, x)
         p = '-c {0} -g {1}'.format(c, g)
         para = svm_parameter(p)
         model = svm_train(prob, para)
@@ -149,15 +221,15 @@ def selection(pop, fitvalue):
     return select_pop
 
 
-def genetic(x, y, xt, yt):
-    popsize = 500  # 种群的大小
+def geneticFeature(x, y, xt, yt, featured_trainset, train_label):
+    popsize = 2  # 种群的大小
     # 用遗传算法求函数最大值：
     # f(x)=10*sin(5x)+7*cos(4x) x∈[0,10]
 
     chromlength = 23  # 基因片段的长度 13+10=23
     pc = 0.6  # 两个个体交叉的概率
-    pm = 0.005  # 基因突变的概率
-    results = [[]]
+    pm = 0.01  # 基因突变的概率
+    results = []
     temp = []
     pop = []
 
@@ -166,12 +238,12 @@ def genetic(x, y, xt, yt):
             temp.append(random.randint(0, 1))
         pop.append(temp)
         temp = []
-    for i in range(50):  # 繁殖100代
+    for i in range(2):  # 繁殖100代
         print '$$$$$$$$$$$$$$$'
         print i
         print '$$$$$$$$$$$$$$$'
 
-        objvalue = calobjvalue(pop, y, x, yt, xt)  # 计算目标函数值
+        objvalue = calobjvalue(pop, y, x, yt, xt, featured_trainset, train_label)  # 计算目标函数值
         [bestindividual, bestfit] = best(pop, objvalue)  # 选出最好的个体和最好的函数值
         results.append([bestfit, b2d(bestindividual)])  # 每次繁殖，将最好的结果记录下来
         select_pop = selection(pop, objvalue)  # 自然选择，淘汰掉一部分适应性低的个体
@@ -181,6 +253,7 @@ def genetic(x, y, xt, yt):
     results.sort()
     print results
     print(results[-1])  # 打印函数最大值和对应的
+    return results[-1]
 
 
 def test():
@@ -189,13 +262,12 @@ def test():
     from FeatureSelection import FeatureSelectionProcess
     from PreProcess.minmax2 import minmaxscaler
     from PreProcess.createDataset import featureAndLabel
+    from Fsvmcil import create_weight
     import arff
 
-    filePath = path.abspath(path.join(path.dirname(__file__), path.pardir, r'DataSet', r'MDP', r'D2', r'PC1.arff'))
+    filePath = path.abspath(path.join(path.dirname(__file__), path.pardir, r'DataSet', r'MDP', r'D2', r'PC5.arff'))
 
-    data, trainsetWithLabel, testsetWithLabel, relation, attribute = createDataSet(filePath, 5)
-
-    # featureSet = bagging.bagIt(trainset)
+    data, trainsetWithLabel, testsetWithLabel, relation, attribute = createDataSet(filePath, 10)
 
     # 分离出训练集、测试集的feature, label
     train_feature, train_label = featureAndLabel(trainsetWithLabel)
@@ -214,7 +286,10 @@ def test():
     x, y = LibsvmFormat.formatlib(featured_trainset, train_label)
     xtest, ytest = LibsvmFormat.formatlib(testset, test_label)
 
-    genetic(x, y, xtest, ytest)
+    # W=create_weight(featured_trainset, train_label)
+    best_para = geneticFeature(x, y, xtest, ytest, featured_trainset, train_label)
+
+    print best_para
 
 
 if __name__ == '__main__':

@@ -13,7 +13,6 @@ def formatlib(feature, label):
     print x
     return x, label
 
-
 def test():
     from PreProcess import createDataset
     from os import path

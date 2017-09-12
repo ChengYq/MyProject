@@ -5,7 +5,8 @@ import numpy as np
 def create_weight(train_feature, train_label):
     # 输入 train_feature, train_label 都是numpy类型的
     # 输出：noise_weight 一个list，反映了权值
-    # 参考： FSVM-CIL，exp的方法不好用，因为我的值都太大
+    # 这里可以进行bagging
+
     train_feature_pos = []
     train_feature_neg = []
     norm_pos = []

@@ -189,10 +189,11 @@ def genetic(x, y, xt, yt, W):
 def test():
     from PreProcess.createDataset import createDataSet
     from os import path
-    from FeatureSelection import afterFeatureSelection4
+    from FeatureSelection import FeatureSelectionProcess
     from PreProcess.minmax2 import minmaxscaler
     from PreProcess.createDataset import featureAndLabel
     from Fsvmcil import create_weight
+    from Fsvmcilknn import create_weightknn
     import arff
 
     filePath = path.abspath(path.join(path.dirname(__file__), path.pardir, r'DataSet', r'MDP', r'D2', r'PC5.arff'))
@@ -207,8 +208,8 @@ def test():
     trainset, x_min, x_max = minmaxscaler(train_feature)
     testset = minmaxscaler(test_feature, x_feature_min=x_min, x_feature_max=x_max)
 
-    featured_trainset, featured_attribute = afterFeatureSelection4.selectedSet(trainset, train_label, attribute,
-                                                                               trainset)
+    featured_trainset, featured_attribute = FeatureSelectionProcess.selectedSet(trainset, train_label, attribute,
+                                                                                trainset)
     featured_trainset = np.array(featured_trainset)
     featured_trainset = featured_trainset[:, :-1]
 
@@ -216,8 +217,10 @@ def test():
     x, y = LibsvmFormat.formatlib(featured_trainset, train_label)
     xtest, ytest = LibsvmFormat.formatlib(testset, test_label)
 
-    # W=create_weight(featured_trainset, train_label)
-    W = []
+    # W=createGeneticAlgoWeight2_weight(featured_trainset, train_label)
+    # W = []
+    W = create_weightknn(featured_trainset, train_label, 10)
+
     best_para = genetic(x, y, xtest, ytest, W)
 
     print best_para

@@ -13,7 +13,7 @@ def corr(feature):
             correlation[i, j] = c
             pvalue[i, j] = p
 
-    for i in range(row_num):
+    for i in range(col_num):
         for j in range(i + 1, col_num):
             if (i not in toDelete) and (j not in toDelete):
                 if (correlation[i, j] > 0.95) and (pvalue[i, j] < 0.01):
